@@ -96,7 +96,7 @@ bool MediatekRadio::isRadioRunning() {
 void MediatekRadio::startVolumeUpdater() {
 
 	system("touch ~/.radioRunning");
-	system("while ( test -f ~/.radioRunning) do $(pactl set-source-volume source.droid $(printf \"%.*f\\n\" 0 $(echo print $(dbus-send --session --type=method_call --print-reply --dest=com.canonical.indicator.sound /com/canonical/indicator/sound org.gtk.Actions.DescribeAll | grep -A5 \"string \\\"volume\\\"\" | grep double | cut -b 49-52)*65536 | perl))); done &");
+	system("while ( test -f ~/.radioRunning) do $(pactl set-source-volume source.droid $(printf \"%.*f\\n\" 0 $(echo print $(dbus-send --session --type=method_call --print-reply --dest=org.ayatana.indicator.sound /org/ayatana/indicator/sound org.gtk.Actions.DescribeAll | grep -A5 \"string \\\"volume\\\"\" | grep double | cut -b 49-52)*65536 | perl))); done &");
 
 }
 
