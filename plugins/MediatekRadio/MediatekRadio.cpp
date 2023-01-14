@@ -81,8 +81,8 @@ void MediatekRadio::preparePulseAudio() {
 
 	int ret;
 
-	ret = system("pacmd set-source-port 1 input-fm_tuner");
-	ret = system("pactl load-module module-loopback source=1 sink=0");
+	ret = system("pacmd set-source-port source.droid input-fm_tuner");
+	ret = system("pactl load-module module-loopback source=source.droid sink=sink.primary_output");
 
 }
 
@@ -96,14 +96,14 @@ bool MediatekRadio::isRadioRunning() {
 void MediatekRadio::startVolumeUpdater() {
 
 	system("touch ~/.radioRunning");
-	system("while ( test -f ~/.radioRunning) do $(pactl set-source-volume 1 $(printf \"%.*f\\n\" 0 $(echo print $(dbus-send --session --type=method_call --print-reply --dest=com.canonical.indicator.sound /com/canonical/indicator/sound org.gtk.Actions.DescribeAll | grep -n5 \"string \\\"volume\\\"\" | grep double | cut -b 53-56)*65536 | perl))); done &");
+	system("while ( test -f ~/.radioRunning) do $(pactl set-source-volume source.droid $(printf \"%.*f\\n\" 0 $(echo print $(dbus-send --session --type=method_call --print-reply --dest=com.canonical.indicator.sound /com/canonical/indicator/sound org.gtk.Actions.DescribeAll | grep -A5 \"string \\\"volume\\\"\" | grep double | cut -b 49-52)*65536 | perl))); done &");
 
 }
 
 void MediatekRadio::stopVolumeUpdater() {
 
 	system("rm ~/.radioRunning");
-	system("pactl set-source-volume 1 65536");
+	system("pactl set-source-volume source.droid 65536"); // 100%
 
 }
 
@@ -154,9 +154,9 @@ QByteArray MediatekRadio::stopRadio() {
 	ret = system("pactl unload-module module-loopback");
 
 	if(isHeadset) {
-		ret = system("pacmd set-source-port 1 input-wired_headset && pacmd set-sink-port 0 output-wired_headset");
+		ret = system("pacmd set-source-port source.droid input-wired_headset && pacmd set-sink-port sink.primary_output output-wired_headset");
 	} else {
-		ret = system("pacmd set-source-port 1 input-builtin_mic && pacmd set-sink-port 0 output-wired_headphone");
+		ret = system("pacmd set-source-port source.droid input-builtin_mic && pacmd set-sink-port sink.primary_output output-wired_headphone");
 	}
 
 	stopVolumeUpdater();
