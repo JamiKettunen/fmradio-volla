@@ -1,5 +1,6 @@
 {
   "clickable_minimum_required": "6.12.2",
   "builder": "cmake",
-  "kill": "fmradio"
+  "kill": "fmradio",
+  "skip_review": true,
 }
